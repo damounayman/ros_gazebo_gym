@@ -97,9 +97,10 @@ class Respawn():
 
             self.goal_position.position.x = self.goal_x_list[self.index]
             self.goal_position.position.y = self.goal_y_list[self.index]
-
-        time.sleep(0.5)
-        self.respawnModel()
+            #time.sleep(0.5)
+            self.respawnModel()
+        else:
+            self.respawnModel()
         print(f'New goal position: {self.goal_position.position.x:.2f}, {self.goal_position.position.y:.2f}')
 
         return self.goal_position.position.x, self.goal_position.position.y

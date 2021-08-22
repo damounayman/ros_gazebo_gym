@@ -171,12 +171,16 @@ class TurtleBot3Env(gym.Env):
 
 
     def navigationReward(self, heading):
+        
         reference = 1-2*abs(heading)/math.pi
         reward = 5*(reference ** 2)
 
         if reference < 0:
             reward = -reward
-
+        
+        # Reward base
+        #reward = -5*self._getGoalDistace()
+        
         return reward
 
 
@@ -200,6 +204,7 @@ class TurtleBot3Env(gym.Env):
         else:
             heading = state[-2]
             reward = self.navigationReward(heading)
+        #print(reward)
         return reward
 
     def set_ang_vel(self, action):
@@ -233,6 +238,7 @@ class TurtleBot3Env(gym.Env):
 
     def reset(self):
         self.elapsed_steps = 0
+        self.prev_base_reward = None
         rospy.wait_for_service('gazebo/reset_simulation')
         try:
             self.reset_proxy()
