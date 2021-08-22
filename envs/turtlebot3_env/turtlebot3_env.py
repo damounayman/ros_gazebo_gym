@@ -45,7 +45,8 @@ class TurtleBot3Env(gym.Env):
         self.unpause_proxy = rospy.ServiceProxy('gazebo/unpause_physics', Empty)
         self.pause_proxy = rospy.ServiceProxy('gazebo/pause_physics', Empty)
         self.respawn_goal = Respawn()
-
+        self.max_episode_steps = 225 
+        self.elapsed_steps = 0
         self.respawn_goal.setGoalList(goal_list)
 
         self.observation_size = observation_size
@@ -154,9 +155,9 @@ class TurtleBot3Env(gym.Env):
             print(f'{time_info}: Collision!!')
             done = True
 
-        if abs(heading) > math.radians(self.angle_out):
-            print(f'{time_info}: Out of angle')
+        if self.elapsed_steps >= self.max_episode_steps:
             done = True
+            print(f'{time_info}: max_steps_exceeded')
 
         if current_distance < self.goalbox_distance:
             if not done:
@@ -199,7 +200,6 @@ class TurtleBot3Env(gym.Env):
         else:
             heading = state[-2]
             reward = self.navigationReward(heading)
-
         return reward
 
     def set_ang_vel(self, action):
@@ -209,7 +209,7 @@ class TurtleBot3Env(gym.Env):
             self.ang_vel = self.actions[action]
 
     def step(self, action):
-
+        self.elapsed_steps += 1
         self.set_ang_vel(action)
 
         vel_cmd = Twist()
@@ -232,6 +232,7 @@ class TurtleBot3Env(gym.Env):
 
 
     def reset(self):
+        self.elapsed_steps = 0
         rospy.wait_for_service('gazebo/reset_simulation')
         try:
             self.reset_proxy()

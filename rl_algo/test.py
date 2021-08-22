@@ -3,9 +3,9 @@ import envs
 from stable_baselines3 import PPO
 import rospy
 
-env_name='TurtleBot3_Circuit_Simple-v0'
+env_name='TurtleBot3_Env-v0'
 rospy.init_node(env_name.replace('-', '_'))
-env = gym.make("TurtleBot3_Circuit_Simple-v0")
+env = gym.make("TurtleBot3_Env-v0")
 
 observation = env.reset()
 
